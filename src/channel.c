@@ -1,6 +1,6 @@
 /* Copyright (c) 2004-2007 Sara Golemon <sarag@libssh2.org>
  * Copyright (c) 2005 Mikhail Gusarov <dottedmag@dottedmag.net>
- * Copyright (c) 2008-2011 by Daniel Stenberg
+ * Copyright (c) 2008-2014 by Daniel Stenberg
  *
  * All rights reserved.
  *
@@ -1544,6 +1544,9 @@ _libssh2_channel_receive_window_adjust(LIBSSH2_CHANNEL * channel,
 {
     int rc;
 
+    if(store)
+        *store = channel->remote.window_size;
+
     if (channel->adjust_state == libssh2_NB_state_idle) {
         if (!force
             && (adjustment + channel->adjust_queue <
@@ -1553,14 +1556,10 @@ _libssh2_channel_receive_window_adjust(LIBSSH2_CHANNEL * channel,
                            "for channel %lu/%lu",
                            adjustment, channel->local.id, channel->remote.id);
             channel->adjust_queue += adjustment;
-            if(store)
-                *store = channel->remote.window_size;
             return 0;
         }
 
         if (!adjustment && !channel->adjust_queue) {
-            if(store)
-                *store = channel->remote.window_size;
             return 0;
         }
 
@@ -1598,8 +1597,6 @@ _libssh2_channel_receive_window_adjust(LIBSSH2_CHANNEL * channel,
 
     channel->adjust_state = libssh2_NB_state_idle;
 
-    if(store)
-        *store = channel->remote.window_size;
     return 0;
 }
 
