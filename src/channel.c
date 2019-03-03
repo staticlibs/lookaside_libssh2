@@ -670,8 +670,6 @@ int _libssh2_channel_forward_cancel(LIBSSH2_LISTENER *listener)
 
     LIBSSH2_FREE(session, listener);
 
-    listener->chanFwdCncl_state = libssh2_NB_state_idle;
-
     return 0;
 }
 
